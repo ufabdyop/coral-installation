@@ -1,0 +1,9 @@
+sudo chmod 755 /etc/init.d/postmaster
+sudo rm /etc/init.d/opencoral
+sudo ln -s /usr/local/coral/sbin/opencoral /etc/init.d/opencoral
+sed -i '122 i\
+\tsleep 7' /usr/local/coral/sbin/opencoral 
+
+#comment out line: Defaults    requiretty
+sudo visudo
+

@@ -1,0 +1,64 @@
+su
+
+/usr/sbin/visudo
+/etc/init.d/httpd start
+
+echo 'pathmunge /sbin' >> /etc/profile;
+echo 'pathmunge /usr/sbin' >> /etc/profile;
+echo 'pathmunge /usr/local/sbin' >> /etc/profile;
+echo 'pathmunge /usr/local/jdk1.6.0_10/bin' >> /etc/profile;
+echo 'pathmunge /usr/local/ant/bin' >> /etc/profile;
+echo 'pathmunge /local/postgresql-8.2.16/bin' >> /etc/profile;
+echo 'pathmunge /usr/local/coral/bin' >> /etc/profile;
+echo 'pathmunge /usr/local/coral/sbin' >> /etc/profile;
+
+grep unset /etc/profile > unsets;
+grep -v unset /etc/profile > profile1;
+cat profile1 unsets > /etc/profile;
+rm unsets profile1;
+
+source /etc/profile
+
+groupadd opencoral
+usermod -a -G coral,opencoral coral
+chown -R coral:opencoral opencoral
+vim /var/data/pg8.2/pg_hba.conf
+mkdir -p /usr/local/coral/etc/private
+mkdir -p /usr/local/coral/share/certs
+ chown -R coral:opencoral /usr/local/coral
+cd /usr/local/coral/etc/private
+keytool -genkey -alias coralkey -keyalg rsa -keystore .signstore
+
+chown -R coral:opencoral /home/coral/opencoral
+chown -R coral:opencoral /usr/local/coral
+exit
+cd ~/opencoral/src/sql/Postgres/initialSetup
+sed -i 's/password/monkey/g' lab_db.sql
+source /etc/profile
+echo monkey
+gmake 
+
+cd ~/opencoral
+touch config/nanofab.utah.edu-prod.properties
+ifconfig
+ant configure
+ant build deployAll
+opencoral start
+
+ant bootstrapUser
+coral # remote password
+coral-admin
+
+ant build deployAll
+
+scp ryant@ryan.nanofab.utah.edu:/var/tmp/ldapsvn/CoralUtah/trunk/documentation/installation/03_files.tar .
+tar xvf 03_files.tar
+
+sudo cp postmaster /etc/init.d
+sudo cp opencoral /etc/init.d
+
+ sudo /sbin/chkconfig httpd on
+ sudo /sbin/chkconfig postmaster on
+ sudo /sbin/chkconfig opencoral on
+
+

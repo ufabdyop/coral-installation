@@ -1,0 +1,16 @@
+sudo yum install php53 php-pear php53-pgsql php53-ldap 
+sudo pecl install xdebug
+
+# add to /etc/php.ini
+# [Zend]
+# zend_extension = /usr/lib64/php/modules/xdebug.so
+# xdebug.remote_enable = 1
+# xdebug.handler=dbgp
+# xdebug.remote_mode =req
+# xdebug.remote_port = 9000
+# xdebug.remote_host = 127.0.0.1
+# xdebug.remote_log=/var/log/xdebug.log
+
+# add to /etc/php.ini
+# date.timezone = "America/Denver"
+

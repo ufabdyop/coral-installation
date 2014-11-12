@@ -1,0 +1,36 @@
+yum install httpd cvs gcc readline-devel zlib-devel wget
+wget http://www.eng.utah.edu/~ryant/pkgs/apache-ant-1.7.1-bin.tar.gz
+wget http://www.eng.utah.edu/~ryant/pkgs/jdk-6u10-linux-x64.bin
+wget http://www.eng.utah.edu/~ryant/pkgs/postgresql-8.2.16.tar.gz
+cvs -d :pserver:coral@opencoral.org:/home/src login
+cvs -d :pserver:coral@opencoral.org:/home/src checkout -r coral-3_4_6 opencoral
+chmod 755 jdk-6u10-linux-x64.bin 
+./jdk-6u10-linux-x64.bin 
+mv jdk1.6.0_10/ /usr/local
+/usr/sbin/alternatives --install /usr/bin/java java /usr/local/jdk1.6.0_10/bin/java 2
+/usr/sbin/alternatives --config java
+tar xvzf apache-ant-1.7.1-bin.tar.gz 
+mv apache-ant-1.7.1 /usr/local
+sudo ln -s /usr/local/apache-ant-1.7.1/ /usr/local/ant
+tar xvzf postgresql-8.2.16.tar.gz 
+cd postgresql-8.2.16
+./configure --prefix=/local/postgresql-8.2.16
+gmake
+gmake install
+/usr/sbin/useradd postgres
+mkdir -p /var/data/pg8.2
+chown -R postgres /var/data
+su - postgres
+cd /local/postgresql-8.2.16/bin/
+./initdb -D /var/data/pg8.2/
+./postgres -D /var/data/pg8.2 > /var/tmp/logfile 2>&1 &
+./createdb test
+./dropdb test
+./createlang plpgsql template1
+./createuser -d -a -P coraldba
+./createdb -e -O coraldba coral 'OpenCoral Database'
+./createlang -l coral
+exit
+exit
+
+

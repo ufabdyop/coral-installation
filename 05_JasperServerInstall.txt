@@ -1,0 +1,37 @@
+
+
+cd /etc/yum.repos.d
+wget 'http://www.jpackage.org/jpackage50.repo'
+yum update
+yum install tomcat6 tomcat6-webapps tomcat6-admin-webapps
+service tomcat6 start
+yum install mysql-server
+chkconfig tomcat6 on
+chkconfig mysqld on
+
+
+cd
+#download jasperserver
+wget http://bit.ly/pwKb8a
+
+sudo ./jasperreports-server-cp-4.1.0-linux-x64-installer.run
+# /usr/share/tomcat6 is the directory for tomcat6
+
+# Add the following line to /usr/share/tomcat6/conf/tomcat6.conf
+JAVA_OPTS="$JAVA_OPTS "-Djava.awt.headless=true
+
+# 
+# copy /opt/jasperreports-server-cp-4.1.0/ctlscript.sh /etc/init.d/jasperserver
+
+#add this header to /etc/init.d/jasperserver:
+#!/bin/bash
+#
+# jasperserver  This shell script takes care of starting and stopping
+#               the jasper reports server
+#
+# chkconfig: - 96 04
+# description:  JasperServer
+# processname: jasper
+# pidfile: /var/run/jasper.pid
+
+chkconfig jasperserver on
